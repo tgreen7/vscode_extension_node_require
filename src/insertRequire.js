@@ -64,7 +64,17 @@ module.exports = function(value, insertAtCursor, config) {
   const lineStart = getPosition(codeBlock, isExternal)
   const cursorPosition = editor.selection.active
 
-  return Promise.resolve(detectFileRequireMethod(codeBlock))
+  return Promise.resolve(
+    vscode.window
+      .showInputBox({
+        value: importName
+      })
+      .then(importname => {
+        importName = importname
+        return importName
+      })
+  )
+    .then(detectFileRequireMethod(codeBlock))
     .then(requireMethod => {
       if (requireMethod !== null) return requireMethod
 
