@@ -71,7 +71,10 @@ module.exports = function(value, insertAtCursor, config) {
       })
       .then(importname => {
         if (importname === undefined) reject('Cancelled')
-        else resolve(importName)
+        else {
+          importName = importname
+          resolve()
+        }
       })
   })
     .then(() => {
