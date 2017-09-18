@@ -74,7 +74,9 @@ module.exports = function(value, insertAtCursor, config) {
         else resolve(importName)
       })
   })
-    .then(detectFileRequireMethod(codeBlock))
+    .then(() => {
+      return detectFileRequireMethod(codeBlock)
+    })
     .then(requireMethod => {
       if (requireMethod !== null) return requireMethod
 
