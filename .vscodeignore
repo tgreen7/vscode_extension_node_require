@@ -1,7 +1,6 @@
 .vscode
 typings
 test
-node_modules
 .gitignore
 jsconfig.json
 vsc-extension-quickstart.md
