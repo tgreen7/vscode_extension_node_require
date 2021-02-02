@@ -38,6 +38,7 @@
           "type": "array",
           "default": [
             "js",
+            "mjs",
             "ts",
             "jsx",
             "tsx",
@@ -160,6 +161,11 @@
           "type": "boolean",
           "default": false,
           "description": "places import statements at cursor instead of at the bottom of the import block"
+        },
+        "node_require.keepFileExtension": {
+          "type": "boolean",
+          "default": false,
+          "description": "keep file extension (.js) in require statements. Will also keep `/index.js.`"
         }
       }
     },

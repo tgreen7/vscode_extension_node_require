@@ -1,3 +1,7 @@
+# 1.5.0
+
+- ADDED: option to keep file extension (keepFileExtension)
+
 # 1.2.10
 
 - FIXED: places external import before local destructured imports.

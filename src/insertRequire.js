@@ -35,7 +35,7 @@ module.exports = async function(value, insertAtCursor, config, importAll) {
     relativePath = path.relative(dirName, value.fsPath);
     relativePath = relativePath.replace(/\\/g, "/");
 
-    if (relativePath.match(/^index\.(j|t)sx?/)) {
+    if (relativePath.match(/^index\.m?(j|t)sx?/)) {
       // We have selected index.js in the same directory as the source file
       importName = path.basename(path.dirname(editor.document.fileName));
       relativePath = `./${relativePath}`;
@@ -43,17 +43,23 @@ module.exports = async function(value, insertAtCursor, config, importAll) {
       // We have selected a file from another directory
       const fileName = path.basename(relativePath).toLowerCase();
       // if it is an index file remove the /index.js portion
-      if (fileName.match(/index\.(j|t)sx?/)) {
+      let filePathForImportName = relativePath;
+      if (fileName.match(/index\.m?(j|t)sx?/)) {
         const lengthToRemove =
           "/index.js".length - (fileName.match(/\..*x/) ? 1 : 0);
 
-        relativePath = relativePath.slice(
+        filePathForImportName = filePathForImportName.slice(
           0,
-          relativePath.length - lengthToRemove
+          filePathForImportName.length - lengthToRemove
         );
+        if (!config.keepFileExtension) {
+          relativePath = filePathForImportName;
+        }
       }
 
-      const baseName = convertCase(path.basename(relativePath).split(".")[0]);
+      const baseName = convertCase(
+        path.basename(filePathForImportName).split(".")[0]
+      );
       const aliasName = commonNames(baseName, config.aliases);
       importName = aliasName || baseName;
       // selected a path in the same directory as current file
@@ -62,7 +68,9 @@ module.exports = async function(value, insertAtCursor, config, importAll) {
       }
     }
     // get rid of file extension
-    relativePath = relativePath.replace(/\.(j|t)sx?$/, "");
+    if (!config.keepFileExtension) {
+      relativePath = relativePath.replace(/\.m?(j|t)sx?$/, "");
+    }
   } else {
     // A core module or dependency was selected
     isExternal = true;
@@ -80,7 +88,8 @@ module.exports = async function(value, insertAtCursor, config, importAll) {
   if (importAll) {
     requireMethod = constants.TYPE_IMPORT;
   } else {
-    requireMethod = detectFileRequireMethod(codeBlock) || config.defaultRequireMethod;
+    requireMethod =
+      detectFileRequireMethod(codeBlock) || config.defaultRequireMethod;
   }
   if (!requireMethod) {
     const style = await vscode.window.showQuickPick(

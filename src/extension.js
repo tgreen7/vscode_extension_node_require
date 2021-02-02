@@ -44,8 +44,9 @@ function activate(context) {
             .replace(vscode.workspace.rootPath, "")
             .replace(/\\/g, "/");
 
-          const label = path.basename(dep.path).match(/index\.(j|t)sx?/)
-            ? `${path.basename(path.dirname(dep.path))}/${path.basename(
+          const label = path.basename(dep.path).match(/^index\./)
+            ? // if it is an index.js file we need to preserve the folder name for context
+              `${path.basename(path.dirname(dep.path))}/${path.basename(
                 dep.path
               )}`
             : path.basename(dep.path);
