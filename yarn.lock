@@ -116,7 +116,7 @@
   "resolved" "https://registry.npmjs.org/acorn-jsx/-/acorn-jsx-5.0.1.tgz"
   "version" "5.0.1"
 
-"acorn@^6.0.2":
+"acorn@^6.0.0", "acorn@^6.0.2":
   "integrity" "sha512-VY4i5EKSKkofY2I+6QLTbTTN/UvEQPCo6eiwzzSaSWfpaDhOmStMCMod6wmuPciNq+XS0faCglFu2lHZpdHUtg=="
   "resolved" "https://registry.npmjs.org/acorn/-/acorn-6.0.4.tgz"
   "version" "6.0.4"
@@ -362,7 +362,7 @@
   dependencies:
     "ast-types-flow" "0.0.7"
 
-"babel-eslint@^10.0.1":
+"babel-eslint@^10.0.1", "babel-eslint@^8.0.3", "babel-eslint@9.x":
   "integrity" "sha512-z7OT1iNV+TjOwHNLLyJk+HN+YVWX+CLE6fPD2SymJZOZQBs+QIexFjhm4keGTm8MW9xr4EC9Q0PbaLB24V5GoQ=="
   "resolved" "https://registry.npmjs.org/babel-eslint/-/babel-eslint-10.0.1.tgz"
   "version" "10.0.1"
@@ -1034,7 +1034,7 @@
   "resolved" "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz"
   "version" "1.0.5"
 
-"eslint-config-react-app@^3.0.5":
+"eslint-config-react-app@^2.0.1", "eslint-config-react-app@^3.0.5":
   "integrity" "sha512-GjPuy0pbaCkl4+9wm8p0xpl/x/AGFy3wKuju3WNVefDNDDu8T6Ap1OFMDDJbYnOAI+4jfyAE3VT06lAYcJVpdw=="
   "resolved" "https://registry.npmjs.org/eslint-config-react-app/-/eslint-config-react-app-3.0.5.tgz"
   "version" "3.0.5"
@@ -1062,14 +1062,14 @@
     "debug" "^2.6.8"
     "pkg-dir" "^1.0.0"
 
-"eslint-plugin-flowtype@^3.2.0":
+"eslint-plugin-flowtype@^3.2.0", "eslint-plugin-flowtype@2.x":
   "integrity" "sha512-baJmzngM6UKbEkJ5OY3aGw2zjXBt5L2QKZvTsOlXX7yHKIjNRrlJx2ods8Rng6EdqPR9rVNIQNYHpTs0qfn2qA=="
   "resolved" "https://registry.npmjs.org/eslint-plugin-flowtype/-/eslint-plugin-flowtype-3.2.0.tgz"
   "version" "3.2.0"
   dependencies:
     "lodash" "^4.17.10"
 
-"eslint-plugin-import@^2.14.0":
+"eslint-plugin-import@^2.14.0", "eslint-plugin-import@^2.8.0", "eslint-plugin-import@2.x":
   "integrity" "sha512-FpuRtniD/AY6sXByma2Wr0TXvXJ4nA/2/04VPlfpmUDPOpOY264x+ILiwnrk/k4RINgDAyFZByxqPUbSQ5YE7g=="
   "resolved" "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-2.14.0.tgz"
   "version" "2.14.0"
@@ -1085,7 +1085,7 @@
     "read-pkg-up" "^2.0.0"
     "resolve" "^1.6.0"
 
-"eslint-plugin-jsx-a11y@^5.1.1":
+"eslint-plugin-jsx-a11y@^5.1.1", "eslint-plugin-jsx-a11y@5.1.1", "eslint-plugin-jsx-a11y@6.x":
   "integrity" "sha512-5I9SpoP7gT4wBFOtXT8/tXNPYohHBVfyVfO17vkbC7r9kEIxYJF12D3pKqhk8+xnk12rfxKClS3WCFpVckFTPQ=="
   "resolved" "https://registry.npmjs.org/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-5.1.1.tgz"
   "version" "5.1.1"
@@ -1103,7 +1103,7 @@
   "resolved" "https://registry.npmjs.org/eslint-plugin-no-only-tests/-/eslint-plugin-no-only-tests-2.1.0.tgz"
   "version" "2.1.0"
 
-"eslint-plugin-react@^7.11.1":
+"eslint-plugin-react@^7.11.1", "eslint-plugin-react@^7.5.1", "eslint-plugin-react@7.x":
   "integrity" "sha512-cVVyMadRyW7qsIUh3FHp3u6QHNhOgVrLQYdQEB1bPWBsgbNCHdFAeNMquBMCcZJu59eNthX053L70l7gRt4SCw=="
   "resolved" "https://registry.npmjs.org/eslint-plugin-react/-/eslint-plugin-react-7.11.1.tgz"
   "version" "7.11.1"
@@ -1140,7 +1140,7 @@
   "resolved" "https://registry.npmjs.org/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz"
   "version" "1.0.0"
 
-"eslint@^5.9.0":
+"eslint@^2.10.2 || ^3 || ^4", "eslint@^3.0.0 || ^4.0.0 || ^5.0.0", "eslint@^4.13.1", "eslint@^5.9.0", "eslint@>= 4.12.1", "eslint@>=2.0.0", "eslint@2.x - 5.x", "eslint@5.x":
   "integrity" "sha512-g4KWpPdqN0nth+goDNICNXGfJF7nNnepthp46CAlJoJtC5K/cLu3NgCM3AHu1CkJ5Hzt9V0Y0PBAO6Ay/gGb+w=="
   "resolved" "https://registry.npmjs.org/eslint/-/eslint-5.9.0.tgz"
   "version" "5.9.0"
@@ -1896,7 +1896,7 @@
     "jsprim" "^1.2.2"
     "sshpk" "^1.7.0"
 
-"husky@^1.2.0":
+"husky@^0.14.3", "husky@^1.2.0":
   "integrity" "sha512-/ib3+iycykXC0tYIxsyqierikVa9DA2DrT32UEirqNEFVqOj1bFMTgP3jAz8HM7FgC/C8pc/BTUa9MV2GEkZaA=="
   "resolved" "https://registry.npmjs.org/husky/-/husky-1.2.0.tgz"
   "version" "1.2.0"
@@ -2525,7 +2525,7 @@
     "prelude-ls" "~1.1.2"
     "type-check" "~0.3.2"
 
-"lint-staged@^8.1.0":
+"lint-staged@^7.2.0", "lint-staged@^8.1.0":
   "integrity" "sha512-yfSkyJy7EuVsaoxtUSEhrD81spdJOe/gMTGea3XaV7HyoRhTb9Gdlp6/JppRZERvKSEYXP9bjcmq6CA5oL2lYQ=="
   "resolved" "https://registry.npmjs.org/lint-staged/-/lint-staged-8.1.0.tgz"
   "version" "8.1.0"
@@ -3249,7 +3249,7 @@
   "resolved" "https://registry.npmjs.org/preserve/-/preserve-0.2.0.tgz"
   "version" "0.2.0"
 
-"prettier@^1.15.3":
+"prettier@^1.13.7", "prettier@^1.15.3":
   "integrity" "sha512-gAU9AGAPMaKb3NNSUUuhhFAS7SCO4ALTN4nRIn6PJ075Qd28Yn2Ig2ahEJWdJwJmlEBTUfC7mMUSFy8MwsOCfg=="
   "resolved" "https://registry.npmjs.org/prettier/-/prettier-1.15.3.tgz"
   "version" "1.15.3"
