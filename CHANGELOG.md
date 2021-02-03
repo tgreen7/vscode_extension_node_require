@@ -1,3 +1,7 @@
+# 1.9.0
+
+- ADDED: support for npm workspaces (https://github.com/tgreen7/vscode_extension_node_require/issues/19)
+
 # 1.5.0
 
 - ADDED: option to keep file extension (keepFileExtension)
