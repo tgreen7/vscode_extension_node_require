@@ -230,6 +230,7 @@
   },
   "dependencies": {
     "bluebird": "^3.5.3",
+    "glob": "^7.1.2",
     "lodash": "^4.17.11"
   },
   "husky": {

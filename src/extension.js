@@ -6,6 +6,7 @@ const insertRequire = require("./insertRequire");
 const getProjectFiles = require("./getProjectFiles");
 const getCoreModules = require("./getCoreModules");
 const getPackageDeps = require("./getPackageDeps");
+const getWorkspaceDeps = require("./getWorkspaceDeps");
 const showModulePropNames = require("./showModulePropNames");
 
 function activate(context) {
@@ -17,8 +18,12 @@ function activate(context) {
     destructuring = false,
     importAll = false
   } = {}) {
-    Promise.join(getPackageDeps(), getProjectFiles(config)).then(
-      ([packageDepsArray = [], projectFiles = []]) => {
+    Promise.join(
+      getPackageDeps(),
+      getWorkspaceDeps(),
+      getProjectFiles(config)
+    ).then(
+      ([packageDepsArray = [], workspaceDepsArray = [], projectFiles = []]) => {
         const editor = vscode.window.activeTextEditor;
         if (!editor) return;
         const items = [];
@@ -26,6 +31,15 @@ function activate(context) {
           items.push({
             label: dep.label,
             description: "module",
+            fsPath: null,
+            dirPath: dep.dirPath
+          });
+        });
+
+        workspaceDepsArray.sort().forEach(dep => {
+          items.push({
+            label: dep.label,
+            description: "workspace module",
             fsPath: null,
             dirPath: dep.dirPath
           });
