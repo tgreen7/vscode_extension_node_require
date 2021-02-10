@@ -45,4 +45,12 @@ describe("getPosition", () => {
     const lineIndex = getPosition(codeBlocks, true);
     expect(lineIndex).to.equal(0);
   });
+
+  it.skip("gets correct position with multiline require statements", () => {
+    const codeBlocks = readFileIntoLineArray(
+      "testFiles/fileWithMultilineRequire.js"
+    );
+    const lineIndex = getPosition(codeBlocks, true);
+    expect(lineIndex).to.equal(4);
+  });
 });

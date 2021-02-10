@@ -5,26 +5,20 @@ const insertRequire = require("./insertRequire");
 const getProjectFiles = require("./getProjectFiles");
 const getCoreModules = require("./getCoreModules");
 const getPackageDeps = require("./getPackageDeps");
-const getWorkspaceDeps = require("./getWorkspaceDeps");
 const showModulePropNames = require("./showModulePropNames");
 
 async function getQuickPickItems({ config, multiple }) {
   const [
-    packageDepsArray = [],
-    workspaceDepsArray = [],
+    { packageDeps = [], workspaceDeps = [] },
     projectFiles = [],
-  ] = await Promise.all([
-    getPackageDeps(),
-    getWorkspaceDeps(),
-    getProjectFiles(config),
-  ]);
+  ] = await Promise.all([getPackageDeps(), getProjectFiles(config)]);
 
   const editor = vscode.window.activeTextEditor;
 
   if (!editor) return;
   const items = [];
 
-  packageDepsArray.sort().forEach((dep) => {
+  packageDeps.sort().forEach((dep) => {
     items.push({
       label: dep.label,
       description: "module",
@@ -33,7 +27,7 @@ async function getQuickPickItems({ config, multiple }) {
     });
   });
 
-  workspaceDepsArray.sort().forEach((dep) => {
+  workspaceDeps.sort().forEach((dep) => {
     items.push({
       label: dep.label,
       description: "workspace module",
@@ -88,14 +82,14 @@ function activate(context) {
     destructuring = false,
     importAll = false,
   } = {}) {
-    const values = [];
-    const finalizeMultiple = async () => {
-      for (const value of values) {
+    const finalizeMultiple = async (multiValues) => {
+      for (const value of multiValues) {
         await insertRequire(value, insertAtCursor, config);
       }
     };
 
     let items = await getQuickPickItems({ config, multiple });
+    const values = [];
 
     const showSelectionWindow = () => {
       vscode.window

@@ -1,11 +1,13 @@
 const vscode = require("vscode"); // eslint-disable-line
 const _ = require("lodash");
 const path = require("path");
+const { glob } = require("glob");
 
 let warningShown = false;
 
 function resolveDeps(deps) {
-  let keys = [];
+  let packageOptions = [];
+  const map = new Map();
 
   deps.forEach(function (dep) {
     try {
@@ -23,7 +25,22 @@ function resolveDeps(deps) {
         label: d,
         dirPath,
       }));
-      keys = keys.concat(depsArr);
+      packageOptions = packageOptions.concat(depsArr);
+
+      // handle workspaces
+      const workspaces = pck.workspaces || [];
+
+      workspaces.forEach((d) => {
+        const basePath = path.resolve(`${dirPath}/${d}`);
+        const matches = glob.sync(basePath, { silent: true });
+        return matches.forEach((dirPath) => {
+          const { name } = require(`${dirPath}/package.json`);
+          map.set(name, {
+            label: name,
+            dirPath,
+          });
+        });
+      });
     } catch (err) {
       if (!warningShown) {
         vscode.window.showWarningMessage(
@@ -34,7 +51,9 @@ function resolveDeps(deps) {
     }
   });
 
-  return _.uniq(keys);
+  const packageDeps = _.uniqBy(packageOptions, "label");
+  const workspaceDeps = Array.from(map.values());
+  return { packageDeps, workspaceDeps };
 }
 
 module.exports = async function () {
