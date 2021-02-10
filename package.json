@@ -226,12 +226,11 @@
     "lint-staged": "^8.1.0",
     "mocha": "^5.2.0",
     "prettier": "^2.2.1",
-    "vscode": "^1.1.22"
+    "vscode": "^1.1.37"
   },
   "dependencies": {
-    "bluebird": "^3.5.3",
     "glob": "^7.1.2",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.20"
   },
   "husky": {
     "hooks": {

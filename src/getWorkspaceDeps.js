@@ -7,7 +7,7 @@ let warningShown = false;
 function resolveDeps(deps) {
   const map = new Map();
 
-  deps.forEach(function(dep) {
+  deps.forEach(function (dep) {
     try {
       const reqResolved = require.resolve(dep.fsPath);
       if (require.cache[reqResolved]) delete require.cache[reqResolved];
@@ -15,14 +15,14 @@ function resolveDeps(deps) {
       const dirPath = path.dirname(dep.fsPath);
       const workspaces = pck.workspaces || [];
 
-      workspaces.forEach(d => {
+      workspaces.forEach((d) => {
         const basePath = path.resolve(`${dirPath}/${d}`);
         const matches = glob.sync(basePath, { silent: true });
-        return matches.forEach(dirPath => {
+        return matches.forEach((dirPath) => {
           const { name } = require(`${dirPath}/package.json`);
           map.set(name, {
             label: name,
-            dirPath
+            dirPath,
           });
         });
       });
@@ -39,8 +39,10 @@ function resolveDeps(deps) {
   return Array.from(map.values());
 }
 
-module.exports = function() {
-  return vscode.workspace
-    .findFiles("**/package.json", "**/node_modules/**")
-    .then(deps => resolveDeps(deps));
+module.exports = async function () {
+  const deps = await vscode.workspace.findFiles(
+    "**/package.json",
+    "**/node_modules/**"
+  );
+  return resolveDeps(deps);
 };

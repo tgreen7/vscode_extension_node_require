@@ -1,46 +1,46 @@
-const vscode = require('vscode') // eslint-disable-line
-const _ = require('lodash')
-const path = require('path')
+const vscode = require("vscode"); // eslint-disable-line
+const _ = require("lodash");
+const path = require("path");
 
-let warningShown = false
+let warningShown = false;
 
 function resolveDeps(deps) {
-  let keys = []
+  let keys = [];
 
-  deps.forEach(function(dep) {
+  deps.forEach(function (dep) {
     try {
-      const reqResolved = require.resolve(dep.fsPath)
-      if (require.cache[reqResolved]) delete require.cache[reqResolved]
-      const pck = require(dep.fsPath) // eslint-disable-line import/no-dynamic-require, global-require
-      const dirPath = path.dirname(dep.fsPath)
+      const reqResolved = require.resolve(dep.fsPath);
+      if (require.cache[reqResolved]) delete require.cache[reqResolved];
+      const pck = require(dep.fsPath); // eslint-disable-line import/no-dynamic-require, global-require
+      const dirPath = path.dirname(dep.fsPath);
       const dependencies = Object.assign(
         {},
         pck.dependencies || {},
         pck.devDependencies || {}
-      )
+      );
 
-      const depsArr = Object.keys(dependencies).map(d => ({
+      const depsArr = Object.keys(dependencies).map((d) => ({
         label: d,
-        dirPath
-      }))
-      keys = keys.concat(depsArr)
+        dirPath,
+      }));
+      keys = keys.concat(depsArr);
     } catch (err) {
       if (!warningShown) {
         vscode.window.showWarningMessage(
-          'No package.json file in root folder. Only showing core modules and local files.'
-        )
-        warningShown = true
+          "No package.json file in root folder. Only showing core modules and local files."
+        );
+        warningShown = true;
       }
     }
-  })
+  });
 
-  return _.uniq(keys)
+  return _.uniq(keys);
 }
 
-module.exports = function() {
-  const promiseOfPackageJsonFiles = vscode.workspace.findFiles(
-    '**/package.json',
-    '**/node_modules/**'
-  )
-  return promiseOfPackageJsonFiles.then(deps => resolveDeps(deps))
-}
+module.exports = async function () {
+  const deps = await vscode.workspace.findFiles(
+    "**/package.json",
+    "**/node_modules/**"
+  );
+  return resolveDeps(deps);
+};
