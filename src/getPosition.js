@@ -8,10 +8,10 @@ const {
   isStyleRequire,
   isLocalRequire,
   isCommentOrEmpty,
-  isShebang
+  isShebang,
 } = require("./lineUtils");
 
-module.exports = function(codeBlock, placeWithExternals) {
+module.exports = function (codeBlock, placeWithExternals) {
   let candidate = 0;
   let candidateBeforeNamedImport = 0;
   let findingNamedImportEnd = false;
@@ -55,5 +55,32 @@ module.exports = function(codeBlock, placeWithExternals) {
       break;
     }
   }
+
+  // if the before where we are about to place the require statement ends with an open paren
+  // then we need to keep going until we close it
+  /**
+   * this handles requires like this
+   * const debug = require("debug")(
+      `${process.env.APP_NAME}:controllers/${path.basename(__filename)}`
+    );
+   */
+  const lineBeforeProposed = candidate - 1;
+  if (
+    codeBlock[lineBeforeProposed] &&
+    codeBlock[lineBeforeProposed].trim().match(/\($/)
+  ) {
+    let parensToClose = 1;
+    while (candidate < codeBlock.length) {
+      const lineAfter = codeBlock[candidate];
+      parensToClose = parensToClose + (lineAfter.match(/\(/g) || []).length;
+      const numClosingParens = (lineAfter.match(/\)/g) || []).length;
+      parensToClose = parensToClose - numClosingParens;
+      candidate++;
+      if (parensToClose === 0) {
+        break;
+      }
+    }
+  }
+
   return candidate;
 };

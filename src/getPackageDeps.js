@@ -13,7 +13,7 @@ function resolveDeps(deps) {
     try {
       const reqResolved = require.resolve(dep.fsPath);
       if (require.cache[reqResolved]) delete require.cache[reqResolved];
-      const pck = require(dep.fsPath); // eslint-disable-line import/no-dynamic-require, global-require
+      const pck = require(dep.fsPath);
       const dirPath = path.dirname(dep.fsPath);
       const dependencies = Object.assign(
         {},
