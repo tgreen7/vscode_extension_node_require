@@ -1,7 +1,6 @@
 const vscode = require("vscode");
 const path = require("path");
 const _ = require("lodash");
-const micromatch = require("micromatch");
 const insertRequire = require("./insertRequire");
 const getProjectFiles = require("./getProjectFiles");
 const getCoreModules = require("./getCoreModules");
@@ -104,20 +103,21 @@ function activate(context) {
           if (!value && !multiple) {
             quickPick.hide();
           } else {
-            // don't use the micromatch multiple selection if destructuring
+            // don't try to match glob multiple selection if destructuring
             if (!destructuring && userTypedString) {
               const hasMagic = glob.hasMagic(userTypedString);
               if (hasMagic) {
+                const nanomatch = require("nanomatch");
                 const matchingItems = items.filter((item) => {
                   const matchOnPath =
                     item.fsPath &&
-                    micromatch.contains(
+                    nanomatch.contains(
                       item.fsPath.toLowerCase(),
                       userTypedString.toLowerCase()
                     );
                   const matchOnLabel =
                     item.label &&
-                    micromatch.contains(
+                    nanomatch.contains(
                       item.label.toLowerCase(),
                       userTypedString.toLowerCase()
                     );
