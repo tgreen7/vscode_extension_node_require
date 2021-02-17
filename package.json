@@ -2,7 +2,7 @@
   "name": "vs-code-node-require",
   "displayName": "Node Require",
   "description": "Require files, dependencies and core modules",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "publisher": "tgreen7",
   "engines": {
     "vscode": "^1.0.0"
