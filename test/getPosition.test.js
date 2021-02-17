@@ -38,6 +38,22 @@ describe("getPosition", () => {
     expect(lineIndex).to.equal(10);
   });
 
+  it("gets correct position with multiple multiline destructuring local", () => {
+    const codeBlocks = readFileIntoLineArray(
+      "testFiles/fileWithDestructuringImportLocalAndExternal.js"
+    );
+    const lineIndex = getPosition(codeBlocks);
+    expect(lineIndex).to.equal(12);
+  });
+
+  it("gets correct position with multiple multiline destructuring external", () => {
+    const codeBlocks = readFileIntoLineArray(
+      "testFiles/fileWithDestructuringImportLocalAndExternal.js"
+    );
+    const lineIndex = getPosition(codeBlocks, true);
+    expect(lineIndex).to.equal(6);
+  });
+
   it("gets correct position with multiline destructuring external", () => {
     const codeBlocks = readFileIntoLineArray(
       "testFiles/fileWithDestructuringImport.js"
@@ -51,6 +67,22 @@ describe("getPosition", () => {
       "testFiles/fileWithMultilineRequire.js"
     );
     const lineIndex = getPosition(codeBlocks, true);
+    expect(lineIndex).to.equal(9);
+  });
+
+  it("gets correct position with multiline require statement with extra requires after", () => {
+    const codeBlocks = readFileIntoLineArray(
+      "testFiles/fileWithMultilineRequireAndExtras.js"
+    );
+    const lineIndex = getPosition(codeBlocks, false);
+    expect(lineIndex).to.equal(6);
+  });
+
+  it("gets correct position with multiline require statement with extra requires after and relative requires", () => {
+    const codeBlocks = readFileIntoLineArray(
+      "testFiles/fileWithMultilineRequireAndExtrasAndRelatives.js"
+    );
+    const lineIndex = getPosition(codeBlocks, false);
     expect(lineIndex).to.equal(9);
   });
 });

@@ -13,29 +13,22 @@ const {
 
 module.exports = function (codeBlock, placeWithExternals) {
   let candidate = 0;
-  let candidateBeforeNamedImport = 0;
-  let findingNamedImportEnd = false;
-  let findingBlockCommentEnd = false;
   let importOrRequireHit = false;
 
   for (let i = 0; i < codeBlock.length; i++) {
     const line = codeBlock[i];
-    if (findingNamedImportEnd) {
-      if (isNamedImportEnd(line)) {
-        if (isLocalNamedImportEnd(line) && placeWithExternals) {
-          return candidateBeforeNamedImport;
-        }
-        findingNamedImportEnd = false;
-      }
-      candidate = i + 1;
-    } else if (findingBlockCommentEnd) {
-      if (isEndOfBlockComment(line)) findingBlockCommentEnd = false;
-      candidate = i + 1;
-    } else if (isStartOfBlockComment(line) && !isEndOfBlockComment(line)) {
+    if (isStartOfBlockComment(line) && !isEndOfBlockComment(line)) {
       // if a block comment is found below the require/import statements
       if (importOrRequireHit) break;
-      findingBlockCommentEnd = true;
       candidate = i + 1;
+      while (candidate < codeBlock.length) {
+        const cur = codeBlock[candidate];
+        candidate++;
+        i++;
+        if (isEndOfBlockComment(cur)) {
+          break;
+        }
+      }
     } else if (isStartOfBlockComment(line) && isEndOfBlockComment(line)) {
       candidate = i + 1;
     } else if (isShebang(line)) {
@@ -47,38 +40,49 @@ module.exports = function (codeBlock, placeWithExternals) {
       // require/imports should come before style imports
       if (isStyleRequire(line)) break;
       else if (isNamedImport(line) && !isNamedImportEnd(line)) {
-        findingNamedImportEnd = true;
-        candidateBeforeNamedImport = i;
-      } else candidate = i + 1;
+        const candidateBeforeNamedImport = i;
+        candidate = i + 1;
+        while (candidate < codeBlock.length) {
+          const cur = codeBlock[candidate];
+          candidate++;
+          i++;
+          if (isNamedImportEnd(cur)) {
+            if (isLocalNamedImportEnd(cur) && placeWithExternals) {
+              return candidateBeforeNamedImport;
+            }
+            break;
+          }
+        }
+      } else {
+        // This require statement might be directly calling a function.
+        // we would want to skip over this function call before continuing to find
+        // the position
+        /**
+         * this handles requires like this
+         * const debug = require("debug")(
+            `${process.env.APP_NAME}:controllers/${path.basename(__filename)}`
+          );
+        */
+        candidate = i + 1;
+        if (line.trim().match(/\($/)) {
+          let parensToClose = 1;
+          while (candidate < codeBlock.length) {
+            const lineAfter = codeBlock[candidate];
+            parensToClose =
+              parensToClose + (lineAfter.match(/\(/g) || []).length;
+            const numClosingParens = (lineAfter.match(/\)/g) || []).length;
+            parensToClose = parensToClose - numClosingParens;
+            candidate++;
+            i++;
+            if (parensToClose === 0) {
+              break;
+            }
+          }
+        }
+      }
       importOrRequireHit = true;
     } else if (!isCommentOrEmpty(line)) {
       break;
-    }
-  }
-
-  // if the before where we are about to place the require statement ends with an open paren
-  // then we need to keep going until we close it
-  /**
-   * this handles requires like this
-   * const debug = require("debug")(
-      `${process.env.APP_NAME}:controllers/${path.basename(__filename)}`
-    );
-   */
-  const lineBeforeProposed = candidate - 1;
-  if (
-    codeBlock[lineBeforeProposed] &&
-    codeBlock[lineBeforeProposed].trim().match(/\($/)
-  ) {
-    let parensToClose = 1;
-    while (candidate < codeBlock.length) {
-      const lineAfter = codeBlock[candidate];
-      parensToClose = parensToClose + (lineAfter.match(/\(/g) || []).length;
-      const numClosingParens = (lineAfter.match(/\)/g) || []).length;
-      parensToClose = parensToClose - numClosingParens;
-      candidate++;
-      if (parensToClose === 0) {
-        break;
-      }
     }
   }
 

@@ -1,3 +1,7 @@
+# 1.10.0
+
+- ADDED: support for importing multiple files using match pattern (https://github.com/tgreen7/vscode_extension_node_require/issues/15)
+
 # 1.9.1
 
 - FIXED: incorrect position with multi-line require (https://github.com/tgreen7/vscode_extension_node_require/issues/17)

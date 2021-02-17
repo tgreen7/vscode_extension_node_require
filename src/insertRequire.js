@@ -20,8 +20,8 @@ const isRequire = require("./isRequire");
  * @param {*} importAll - whether to use import * as syntax
  * @returns
  */
-module.exports = async function(value, insertAtCursor, config, importAll) {
-  const convertCase = filename =>
+module.exports = async function (value, insertAtCursor, config, importAll) {
+  const convertCase = (filename) =>
     caseName(filename, config.preserveAcronymCase);
   const editor = vscode.window.activeTextEditor;
   let relativePath;
@@ -95,7 +95,7 @@ module.exports = async function(value, insertAtCursor, config, importAll) {
     const style = await vscode.window.showQuickPick(
       [
         { label: "require", value: constants.TYPE_REQUIRE },
-        { label: "import", value: constants.TYPE_IMPORT }
+        { label: "import", value: constants.TYPE_IMPORT },
       ],
       { placeHolder: "Select import style" }
     );
@@ -110,7 +110,7 @@ module.exports = async function(value, insertAtCursor, config, importAll) {
     const exportVarsToUse = [];
     const fileStringNoNewlines = fileString.replace(/(\r\n|\n|\r)/gm, " ");
     // remove exports that have already been imported
-    value.exportVars.forEach(exportVar => {
+    value.exportVars.forEach((exportVar) => {
       const alreadyImportedRegex = new RegExp(`${exportVar}.*${relativePath}`);
       if (!fileStringNoNewlines.match(alreadyImportedRegex)) {
         exportVarsToUse.push(exportVar);
@@ -127,7 +127,7 @@ module.exports = async function(value, insertAtCursor, config, importAll) {
       ? `const ${importName} = require(${pathWithQuotes})${semi}`
       : `import ${importName} from ${pathWithQuotes}${semi}`;
 
-  return editor.edit(editBuilder => {
+  return editor.edit((editBuilder) => {
     const position = config.insertAtCursor
       ? cursorPosition
       : new vscode.Position(lineStart, 0);
@@ -141,7 +141,7 @@ module.exports = async function(value, insertAtCursor, config, importAll) {
     const insertText = config.insertAtCursor
       ? script
       : `${newLineBefore}${script}\n${newLineAfter}`;
-    if (!codeBlock.some(line => line === script))
+    if (!codeBlock.some((line) => line === script))
       editBuilder.insert(position, insertText);
     if (insertAtCursor) editBuilder.insert(cursorPosition, importName);
   });

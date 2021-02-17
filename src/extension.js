@@ -1,11 +1,13 @@
 const vscode = require("vscode");
 const path = require("path");
 const _ = require("lodash");
+const micromatch = require("micromatch");
 const insertRequire = require("./insertRequire");
 const getProjectFiles = require("./getProjectFiles");
 const getCoreModules = require("./getCoreModules");
 const getPackageDeps = require("./getPackageDeps");
 const showModulePropNames = require("./showModulePropNames");
+const { glob } = require("glob");
 
 async function getQuickPickItems({ config, multiple }) {
   const [
@@ -83,34 +85,88 @@ function activate(context) {
     importAll = false,
   } = {}) {
     const finalizeMultiple = async (multiValues) => {
+      if (!multiValues) return;
+      if (!Array.isArray(multiValues)) {
+        multiValues = [multiValues];
+      }
       for (const value of multiValues) {
-        await insertRequire(value, insertAtCursor, config);
+        await insertRequire(value, insertAtCursor, config, importAll);
       }
     };
 
     let items = await getQuickPickItems({ config, multiple });
-    const values = [];
+    const multiValuesCollect = [];
 
     const showSelectionWindow = () => {
-      vscode.window
-        .showQuickPick(items, {
-          placeHolder: "Select dependency",
-          matchOnDescription: true,
-          matchOnDetail: true,
-        })
-        .then((value) => {
-          if (!value) return;
-          if (multiple) {
-            if (value.finish) return finalizeMultiple();
-            values.push(value);
-            items = _.difference(items, values);
-            showSelectionWindow(items);
-          } else if (destructuring) {
-            showModulePropNames(value, insertAtCursor, config);
+      const quickPick = vscode.window.createQuickPick({
+        placeHolder: "Select dependency",
+        matchOnDescription: true,
+        matchOnDetail: true,
+      });
+      quickPick.items = items;
+      quickPick.placeholder = "Select dependency";
+      quickPick.matchOnDescription = true;
+      quickPick.matchOnDetail = true;
+      quickPick.onDidChangeSelection((selection) => {
+        try {
+          const userTypedString = quickPick.value;
+          let value = selection && selection[0];
+          if (!value && !multiple) {
+            quickPick.hide();
           } else {
-            insertRequire(value, insertAtCursor, config, importAll);
+            // don't use the micromatch multiple selection if destructuring
+            if (!destructuring && userTypedString) {
+              const hasMagic = glob.hasMagic(userTypedString);
+              if (hasMagic) {
+                const matchingItems = items.filter((item) => {
+                  const matchOnPath =
+                    item.fsPath &&
+                    micromatch.contains(
+                      item.fsPath.toLowerCase(),
+                      userTypedString.toLowerCase()
+                    );
+                  const matchOnLabel =
+                    item.label &&
+                    micromatch.contains(
+                      item.label.toLowerCase(),
+                      userTypedString.toLowerCase()
+                    );
+                  return matchOnPath || matchOnLabel;
+                });
+                if (matchingItems.length) {
+                  value = matchingItems;
+                }
+              }
+            }
+            if (multiple) {
+              if (value.finish) {
+                quickPick.hide();
+                return finalizeMultiple(multiValuesCollect);
+              }
+              if (Array.isArray(value)) {
+                multiValuesCollect.push(...value);
+              } else {
+                multiValuesCollect.push(value);
+              }
+              items = _.difference(items, multiValuesCollect);
+              quickPick.items = items;
+            } else if (destructuring) {
+              quickPick.hide();
+              showModulePropNames(value, insertAtCursor, config);
+            } else {
+              quickPick.hide();
+              finalizeMultiple(value);
+            }
           }
-        });
+        } catch (error) {
+          console.error("error:", error);
+          vscode.window.showErrorMessage("Error performing require");
+        }
+      });
+      quickPick.onDidHide(() => {
+        quickPick.dispose();
+      });
+      quickPick.show();
     };
 
     showSelectionWindow();
