@@ -84,16 +84,6 @@ function activate(context) {
     destructuring = false,
     importAll = false,
   } = {}) {
-    const finalizeMultiple = async (multiValues) => {
-      if (!multiValues) return;
-      if (!Array.isArray(multiValues)) {
-        multiValues = [multiValues];
-      }
-      for (const value of multiValues) {
-        await insertRequire(value, insertAtCursor, config, importAll);
-      }
-    };
-
     let items = await getQuickPickItems({ config, multiple });
     const multiValuesCollect = [];
 
@@ -139,23 +129,30 @@ function activate(context) {
               }
             }
             if (multiple) {
-              if (value.finish) {
-                quickPick.hide();
-                return finalizeMultiple(multiValuesCollect);
+              if (value) {
+                if (value.finish) {
+                  quickPick.hide();
+                  insertRequire(
+                    multiValuesCollect,
+                    insertAtCursor,
+                    config,
+                    importAll
+                  );
+                }
+                if (Array.isArray(value)) {
+                  multiValuesCollect.push(...value);
+                } else {
+                  multiValuesCollect.push(value);
+                }
+                items = _.difference(items, multiValuesCollect);
+                quickPick.items = items;
               }
-              if (Array.isArray(value)) {
-                multiValuesCollect.push(...value);
-              } else {
-                multiValuesCollect.push(value);
-              }
-              items = _.difference(items, multiValuesCollect);
-              quickPick.items = items;
             } else if (destructuring) {
               quickPick.hide();
               showModulePropNames(value, insertAtCursor, config);
             } else {
               quickPick.hide();
-              finalizeMultiple(value);
+              insertRequire(value, insertAtCursor, config, importAll);
             }
           }
         } catch (error) {

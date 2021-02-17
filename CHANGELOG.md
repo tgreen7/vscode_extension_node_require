@@ -1,3 +1,7 @@
+# 1.10.1
+
+- FIXED: will insert multiple require statements in a single edit action. This is faster and can be undone with one cmd+z 
+
 # 1.10.0
 
 - ADDED: support for importing multiple files using match pattern (https://github.com/tgreen7/vscode_extension_node_require/issues/15)
