@@ -1,6 +1,6 @@
 # 1.10.1
 
-- FIXED: will insert multiple require statements in a single edit action. This is faster and can be undone with one cmd+z 
+- FIXED: will insert multiple require statements in a single edit action. This is faster and can be undone with one cmd+z
 
 # 1.10.0
 
