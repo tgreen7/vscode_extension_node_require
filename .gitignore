@@ -50,5 +50,5 @@ jspm_packages
 # Yarn Integrity file
 .yarn-integrity
 
-
+.vscode-test
 # End of https://www.gitignore.io/api/node

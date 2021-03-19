@@ -3,7 +3,6 @@ const path = require("path");
 const os = require("os");
 const _ = require("lodash");
 const caseName = require("./caseName");
-const commonNames = require("./commonNames");
 const constants = require("./constants");
 const detectFileQuoteType = require("./detectFileQuoteType");
 const detectFileRequireMethod = require("./detectFileRequireMethod");
@@ -24,6 +23,7 @@ function getRequireStatementString({
   const convertCase = (filename) =>
     caseName(filename, config.preserveAcronymCase);
 
+  const { aliases = {} } = config;
   let relativePath;
   let importName;
   if (value.fsPath) {
@@ -57,8 +57,7 @@ function getRequireStatementString({
       const baseName = convertCase(
         path.basename(filePathForImportName).split(".")[0]
       );
-      const aliasName = commonNames(baseName, config.aliases);
-      importName = aliasName || baseName;
+      importName = aliases[baseName] || baseName;
       // selected a path in the same directory as current file
       if (relativePath.indexOf("../") === -1) {
         relativePath = `./${relativePath}`;
@@ -71,8 +70,7 @@ function getRequireStatementString({
   } else {
     // A core module or dependency was selected
     relativePath = value.label;
-    const commonName = commonNames(value.label, config.aliases);
-    importName = commonName || convertCase(value.label);
+    importName = aliases[value.label] || convertCase(value.label);
   }
 
   const pathWithQuotes = `${quoteType}${relativePath}${quoteType}`;
@@ -157,7 +155,7 @@ async function insertRequire(
 
   let importName;
   let fullScript = "";
-  valueToUse.forEach((value) => {
+  valueToUse.forEach((value, i) => {
     const {
       script,
       importName: importNameForValue,
@@ -171,10 +169,13 @@ async function insertRequire(
       fileString,
       semi,
     });
-    const alreadyHasLine = codeBlock.some((line) => line === script);
+    const alreadyHasLine = codeBlock.includes(script);
     if (!alreadyHasLine) {
       importName = importNameForValue;
-      fullScript += `${script}\n`;
+      fullScript += `${script}`;
+      if (i !== valueToUse.length - 1) {
+        fullScript += "\n";
+      }
     }
   });
 

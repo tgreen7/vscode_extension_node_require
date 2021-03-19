@@ -209,7 +209,8 @@
   "scripts": {
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "mocha",
-    "testw": "mocha --watch"
+    "testw": "mocha --watch",
+    "testi": "node ./integrationTests/runTest.js"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
