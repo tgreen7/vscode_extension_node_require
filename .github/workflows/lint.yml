@@ -25,4 +25,5 @@ jobs:
         with:
           auto_fix: true
           eslint: true
+          eslint_args: "--max-warnings 0"
           prettier: true
